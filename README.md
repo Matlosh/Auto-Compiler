@@ -6,7 +6,7 @@ In order to watch for a full project and for any changes in its .c files, this p
 ```
 gcc main.c -o auto_compiler
 ```
-or any command that lets user to compile the .c file.
+or any command that lets user compile the .c file.
 
 <br>
 
