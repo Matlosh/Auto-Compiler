@@ -1,4 +1,4 @@
-/* Made bY: Matlosh | 2022 */
+/* Made by: Matlosh | 2022 */
 
 #include <stdio.h>
 #include <dirent.h>
@@ -55,7 +55,6 @@ int get_file_marking(char *filename, char *extension) {
 // Gets all files with .c extension and adds their filename to the filenames array
 void get_all_files(char filenames[MAX_FILES][FILENAME_MAX], char *path) {
     DIR *dir = opendir(path);
-    // printf("%s\n", path);
 
     struct dirent *filename;
     while((filename = readdir(dir)) && filename != NULL) {
@@ -64,9 +63,6 @@ void get_all_files(char filenames[MAX_FILES][FILENAME_MAX], char *path) {
         
         char filepath[MAX_FILEPATH];
         sprintf(filepath, "%s/%s", path, filename->d_name);
-        // strcat(filepath, path);
-        // strcat(filepath, "/");
-        // strcat(filepath, filename->d_name);
 
         if(file_marking == 0) append_to_filenames(filenames, filepath);
 
@@ -102,7 +98,6 @@ void create_files_array(char filenames[MAX_FILES][FILENAME_MAX], struct file *fi
         struct stat file_stat;
         stat(filenames[i], &file_stat);
         file->last_changed_time = file_stat.st_mtime;
-        // printf("%d\n", file_stat.st_ctime);
 
         file_array_ptr[i] = file;
     }
@@ -125,11 +120,8 @@ int compare_files_arrays(struct file *file_array_ptr_1[MAX_FILES], struct file *
             || (file_array_ptr_1[i] == NULL && file_array_ptr_2[i] != NULL)) return 1;
         if(file_array_ptr_1[i] == NULL && file_array_ptr_2[i] == NULL) return 0;
 
-        // printf("%s: %d | %s: %d\n", file_array_ptr_1[i]->filename, file_array_ptr_1[i]->last_changed_time, file_array_ptr_2[i]->filename, file_array_ptr_2[i]->last_changed_time);
-
         if(strcmp(file_array_ptr_1[i]->filename, file_array_ptr_2[i]->filename) != 0
             || file_array_ptr_1[i]->last_changed_time != file_array_ptr_2[i]->last_changed_time) {
-            // printf("%s: %d | %s: %d\n", file_array_ptr_1[i]->filename, file_array_ptr_1[i]->last_changed_time, file_array_ptr_2[i]->filename, file_array_ptr_2[i]->last_changed_time);
             return 1;
         }
     }
