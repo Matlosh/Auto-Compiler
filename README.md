@@ -11,3 +11,19 @@ or any command that lets user compile the .c file.
 <br>
 
 Next, compiled file should be moved to the root folder of the project that has to be watched over and created `auto_compiler.exe` needs to be opened there.
+
+<br>
+
+### Additional flags
+
+`-i` flag adds every subfolder to the include path (similar to the -i flag in the gcc compiler). So, instead of writing:
+
+```
+#include "subfolder/another_folder/test.h"
+```
+
+you can simply write:
+
+```
+#include "test.h"
+```

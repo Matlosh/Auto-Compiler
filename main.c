@@ -6,8 +6,11 @@
 #include <sys/stat.h>
 
 #define MAX_FILES 256
+#define MAX_FOLDERS 256
 #define MAX_FILEPATH 512
 #define MAX_COMMAND_LENGTH 1024
+
+#define INCLUDE_SUBFOLDERS_FLAG 0x01
 
 struct file {
     char filename[FILENAME_MAX];
@@ -35,6 +38,16 @@ void append_to_filenames(char filenames[MAX_FILES][FILENAME_MAX], char *filename
     }
 }
 
+// Appends folder to the folders array
+void append_to_folders(char folders[MAX_FOLDERS][FILENAME_MAX], char *folder_path) {
+    for(int i = 0; i < MAX_FOLDERS; i++) {
+        if(strlen(folders[i]) == 0) {
+            strcpy(folders[i], folder_path);
+            break;
+        }
+    }
+}
+
 // Returns:
 //  - 0 -> given "filename" is of type "extension"
 //  - 1 -> given "filename" is a folder
@@ -53,7 +66,7 @@ int get_file_marking(char *filename, char *extension) {
 }
 
 // Gets all files with .c extension and adds their filename to the filenames array
-void get_all_files(char filenames[MAX_FILES][FILENAME_MAX], char *path) {
+void get_all_files(char filenames[MAX_FILES][FILENAME_MAX], char folders[MAX_FOLDERS][FILENAME_MAX], char *path) {
     DIR *dir = opendir(path);
 
     struct dirent *filename;
@@ -66,7 +79,10 @@ void get_all_files(char filenames[MAX_FILES][FILENAME_MAX], char *path) {
 
         if(file_marking == 0) append_to_filenames(filenames, filepath);
 
-        if(file_marking == 1) get_all_files(filenames, filepath);
+        if(file_marking == 1) {
+            append_to_folders(folders, filepath);
+            get_all_files(filenames, folders, filepath);
+        }
     }
 
     closedir(dir);
@@ -129,9 +145,21 @@ int compare_files_arrays(struct file *file_array_ptr_1[MAX_FILES], struct file *
 
 // One process of comparing two files with the given time space difference
 // between checks
-void check_for_changes(char filenames[MAX_FILES][FILENAME_MAX], char *executable_name) {
+void check_for_changes(char filenames[MAX_FILES][FILENAME_MAX], char folders[MAX_FOLDERS][FILENAME_MAX],
+    char *executable_name, int flags) {
     char command_args[MAX_COMMAND_LENGTH];
     command_args[0] = '\0';
+
+    printf("%d\n", flags);
+    if(flags & INCLUDE_SUBFOLDERS_FLAG) {
+        for(int i = 0; i < MAX_FOLDERS; i++) {
+            if(strlen(folders[i]) == 0) break;
+            strcat(command_args, "-I");
+            strcat(command_args, folders[i]);
+            strcat(command_args, " ");
+        }
+    }
+
     for(int i = 0; i < MAX_FILES; i++) {
         if(strlen(filenames[i]) == 0) break;
         strcat(command_args, filenames[i]);
@@ -149,6 +177,7 @@ void check_for_changes(char filenames[MAX_FILES][FILENAME_MAX], char *executable
         char command[MAX_COMMAND_LENGTH];
         sprintf(command, "gcc %s -o %s", command_args, executable_name);
         system(command);
+        printf("%s\n", command);
         printf("> File changes detected! Compiling...\n");
     }
 
@@ -156,17 +185,28 @@ void check_for_changes(char filenames[MAX_FILES][FILENAME_MAX], char *executable
     clear_files_array(files_array_2);
 }
 
-void project_mode(char *executable_name) {
+void project_mode(char *executable_name, int flags) {
     char filenames[MAX_FILES][FILENAME_MAX];
+    char folders[MAX_FOLDERS][FILENAME_MAX];
     while(1) {
         memset(filenames, 0, sizeof(filenames));
-        get_all_files(filenames, ".");
-        check_for_changes(filenames, executable_name);
+        memset(folders, 0, sizeof(folders));
+        get_all_files(filenames, folders, ".");
+        check_for_changes(filenames, folders, executable_name, flags);
     }
 }
 
 int main(int argc, char *argv[]) {
     char *executable_name = argv[1];
-    project_mode(executable_name);
+    
+    int flags = 0x00;
+    for(int i = 2; i < argc; i++) {
+        char *flag = argv[i];
+        
+        if(strcmp(flag, "-i") == 0) flags |= INCLUDE_SUBFOLDERS_FLAG;
+    }
+
+
+    project_mode(executable_name, flags);
     return 0;
 }
