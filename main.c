@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
     for(int i = 2; i < argc; i++) {
         char *flag = argv[i];
         
-        if(strcmp(flag, "-i") == 0) flags |= INCLUDE_SUBFOLDERS_FLAG;
+        if(strcmp(flag, "-I") == 0) flags |= INCLUDE_SUBFOLDERS_FLAG;
     }
 
 

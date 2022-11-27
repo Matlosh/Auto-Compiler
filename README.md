@@ -16,7 +16,7 @@ Next, compiled file should be moved to the root folder of the project that has t
 
 ### Additional flags
 
-`-i` flag adds every subfolder's header files to the include path (similar to the -i flag in the gcc compiler). So, instead of writing:
+`-I` flag adds every subfolder's header files to the include path (similar to the -I flag in the gcc compiler). So, instead of writing:
 
 ```
 #include "subfolder/another_folder/test.h"
