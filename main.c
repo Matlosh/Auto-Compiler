@@ -150,7 +150,6 @@ void check_for_changes(char filenames[MAX_FILES][FILENAME_MAX], char folders[MAX
     char command_args[MAX_COMMAND_LENGTH];
     command_args[0] = '\0';
 
-    printf("%d\n", flags);
     if(flags & INCLUDE_SUBFOLDERS_FLAG) {
         for(int i = 0; i < MAX_FOLDERS; i++) {
             if(strlen(folders[i]) == 0) break;
@@ -177,7 +176,6 @@ void check_for_changes(char filenames[MAX_FILES][FILENAME_MAX], char folders[MAX
         char command[MAX_COMMAND_LENGTH];
         sprintf(command, "gcc %s -o %s", command_args, executable_name);
         system(command);
-        printf("%s\n", command);
         printf("> File changes detected! Compiling...\n");
     }
 
