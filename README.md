@@ -27,3 +27,27 @@ you can simply write:
 ```
 #include "test.h"
 ```
+
+<br>
+
+`-T` flag allows to change default watch interval time (time period between comparing all files' modification date. (*Note*: Passed value is in milliseconds) For example:
+
+```
+auto_compiler main -T500
+```
+
+above simply changes watch interval time from the default 1000 milliseconds to the 500 milliseconds.
+
+<br>
+
+`-C` flag allows to append additional compilation flags (and similar) to every automatic gcc compilation command. Below:
+
+```
+auto_compiler main -C"-I"SDL\include\SDL2" -L"SDL\lib""
+```
+
+will lead to execution of the below command every time any of the given source files changes:
+
+```
+gcc ./main.c  -o main -ISDL\include\SDL2 -LSDL\lib
+```
