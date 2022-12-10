@@ -222,8 +222,7 @@ void check_for_changes(char filenames[MAX_FILES][FILENAME_MAX], char folders[MAX
     if(compare_files_arrays(files_array_1, files_array_2) == 1) {
         char command[MAX_COMMAND_LENGTH];
         sprintf(command, "gcc %s -o %s %s", command_args, executable_name, custom_flags);
-        printf("%s\n", command);
-        // system(command);
+        system(command);
         printf("> File changes detected! Compiling...\n");
     }
 
