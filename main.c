@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <sys/stat.h>
 #include <math.h>
+#include <time.h>
 
 #define MAX_FILES 256
 #define MAX_FOLDERS 256
@@ -223,7 +224,15 @@ void check_for_changes(char filenames[MAX_FILES][FILENAME_MAX], char folders[MAX
         char command[MAX_COMMAND_LENGTH];
         sprintf(command, "gcc %s -o %s %s", command_args, executable_name, custom_flags);
         system(command);
-        printf("> File changes detected! Compiling...\n");
+
+        // Gets compilation time
+        time_t raw_time;
+        struct tm *time_info;
+        time(&raw_time);
+        time_info = localtime(&raw_time);
+
+        printf("%d:%d:%d > File changes detected! Compiling...\n", time_info->tm_hour,
+            time_info->tm_min, time_info->tm_sec);
     }
 
     clear_files_array(files_array_1);
